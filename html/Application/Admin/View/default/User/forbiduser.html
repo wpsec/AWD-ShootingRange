@@ -1,0 +1,82 @@
+<link href="__CSS__/forbiduser.css" rel="stylesheet">
+<div class="forbid-box">
+    <div class="forbid-min">
+        <div><span>禁用名单</span></div>
+        <ul class="to-top">
+            <volist name="users" id="vo">
+                <li>{$vo.nickname}</li>
+                <input type="hidden" value="$vo.id" />
+            </volist>
+            <empty name="users">
+                <li>没有选择任何用户~</li>
+            </empty>
+        </ul>
+        <div><span>快速选择禁用天数</span></div>
+        <ul class="to-top">
+            <li data-role="put-day" data-value="1">1天</li>
+            <li data-role="put-day" data-value="3">3天</li>
+            <li data-role="put-day" data-value="7">7天</li>
+            <li data-role="put-day" data-value="30">30天</li>
+            <li data-role="put-day" data-value="365">365天</li>
+            <li data-role="put-day" data-value="0" style="color: #EA2000">永久封停</li>
+        </ul>
+        <div><span>确认时间</span></div>
+        <div  class="to-top">
+            <input type="hidden" name="forbid_ids" value="{$ids}"/>
+            <input class="mark-time" type="text" name="forbid_day" placeholder="输入要禁用的天数，0表示永久封停"/>
+            <br/><span class="forbid-tip">* 支持自定义天数，禁用基于当前时间</span>
+        </div>
+    </div>
+    <div>
+        <button class="btn btn-block btn-primary red-btn" data-role="do-forbiduser">禁用</button>
+    </div>
+</div>
+<script>
+    var forbidAdmin = "{$hasAdmin}" ;
+    var forbidUser = "{$noUser}" ;
+    if(forbidAdmin == 1) {
+        toast.error('不允许对超级管理员执行该操作!') ;
+        setTimeout(function(){
+            $('[data-dismiss="modal"]').click() ;
+        }, 2000) ;
+    }
+    if(forbidUser == 1) {
+        toast.error("请选择要操作的数据!") ;
+        setTimeout(function(){
+            $('[data-dismiss="modal"]').click() ;
+        }, 2000) ;
+    }
+    $(function(){
+        var mark = false ;
+        $('[data-role="do-forbiduser"]').click(function(){
+            if(mark) {
+                return false;
+            }
+            mark = true ;
+            var day = $('input[name="forbid_day"]').val() ;
+            var id = $('input[name="forbid_ids"]').val() ;
+            if(day == '') {
+                toast.error('请输入禁用时间') ;
+                mark = false ;
+                return false;
+            }
+            $.post(U('Admin/User/ForbidUser'), {day:day,id:id}, function(res){
+                if(res.status == 1){
+                    toast.success(res.info) ;
+                    setTimeout(function(){
+                        location.reload();
+                    },2000);
+                }else{
+                    mark = false ;
+                    toast.error(res.info) ;
+                }
+            });
+        });
+        $('[data-role="put-day"]').click(function(){
+            var day = $(this).attr('data-value') ;
+            $('[data-role="put-day"]').removeClass('active') ;
+            $(this).addClass('active') ;
+            $('input[name="forbid_day"]').val(day) ;
+        });
+    });
+</script>

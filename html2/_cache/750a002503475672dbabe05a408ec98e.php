@@ -1,0 +1,1 @@
+<?php exit();?>a:8:{s:2:"id";s:2:"64";s:5:"title";s:6:"客服";s:6:"status";s:1:"1";s:5:"taxis";s:3:"110";s:4:"note";s:0:"";s:6:"layout";s:20:"sort,qtype,qq,weixin";s:5:"mtype";s:1:"0";s:3:"tbl";s:4:"list";}

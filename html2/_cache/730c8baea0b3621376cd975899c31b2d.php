@@ -1,0 +1,1 @@
+<?php exit();?>a:8:{s:2:"id";s:2:"22";s:5:"title";s:12:"文章资讯";s:6:"status";s:1:"1";s:5:"taxis";s:2:"10";s:4:"note";s:30:"适用于新闻，文章之类";s:6:"layout";s:24:"hits,dateline,sort,thumb";s:5:"mtype";s:1:"0";s:3:"tbl";s:4:"list";}

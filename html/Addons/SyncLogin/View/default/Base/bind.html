@@ -1,0 +1,368 @@
+<extend name="Base/common"/>
+
+<block name="style">
+    <link rel="stylesheet" type="text/css" href="{:getRootUrl()}Addons/SyncLogin/_static/css/bind.css">
+    <style>
+
+    </style>
+</block>
+
+<block name="body">
+
+    <div class="col-xs-12 common-block-sm">
+        <header>你已经注册过OpenSNS账号,使用已有账号绑定现在登录的微信账号</header>
+        <p class="explain" style="padding-left:0;">如果你用自己的账号登录过OpenSNS，可以选择此项，将两种登录方式的账号绑定合并为一个账号，绑定后，两种登录方式均可登录到合并后的账号。</p>
+        <div class="row">
+        <div class="col-xs-5">
+            <div class="avatar_box">
+                <img src="{$avatar}" alt="头像" class="img_avatar">
+            </div>
+        </div>
+        <div class="btn-group col-xs-7">
+            <div class="col-xs-7">
+                <div class="tabs">
+                <a href="{:addons_url('SyncLogin://Base/bind',array('tip'=>'new'))}" class="new-btn tab-btn <if condition="$tip eq 'new'">active</if>">绑定新帐号</a>
+                <a href="{:addons_url('SyncLogin://Base/bind',array('tip'=>'exist'))}" class="exist-btn tab-btn <if condition="$tip eq 'exist'">active</if>">绑定已有帐号</a>
+                </div>
+                <php>  if($tip =='new'){</php>
+                <form action="{:addons_url('SyncLogin://Base/newAccount')}" method="post" class="tab-pane">
+                    <div class="form-group ">
+                        <label for="mobile" class=".sr-only col-xs-12" style="display: none"></label>
+                        <div class="phone-block">
+                            <span><i class="icon icon-tablet"></i></span>
+                            <input type="text" id="mobile" class="form_check" check-type="UserMobile" check-url="{:U('ucenter/member/checkAccount')}"
+                                   onblur="setNickname(this);" placeholder="请输入手机号"
+                                   ajaxurl="/member/checkUserNameUnique.html" errormsg="请填写11位手机号"
+                                   nullmsg="请填手机号"
+                                   datatype="*11" value="" name="username">
+                        </div>
+                    </div>
+                    <!--<div class="form-group">-->
+                        <!--<label for="nickname" class=".sr-only col-xs-12" style="display: none"></label>-->
+                        <!--<input type="text" id="nickname" class="form-control" placeholder="请输入昵称"-->
+                               <!--ajaxurl="/member/checkNickNameUnique.html" errormsg="请填写1-16位昵称"-->
+                               <!--nullmsg="请填写昵称"-->
+                               <!--datatype="*1-16" value="" name="nickname">-->
+
+                        <!--<div class="clearfix"></div>-->
+                    <!--</div>-->
+                    <!--<div class="form-group">-->
+                        <!--<label for="inputEmail" class=".sr-only col-xs-12" style="display: none"></label>-->
+                        <!--<input type="text" id="inputEmail" class="form-control" placeholder="请输入电子邮件"-->
+                               <!--ajaxurl="/member/checkUserEmailUnique.html" errormsg="请填写正确格式的邮箱" nullmsg="请填写邮箱"-->
+                               <!--datatype="e" value="" name="email">-->
+
+                        <!--<div class="clearfix"></div>-->
+                    <!--</div>-->
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <div id="check_block" class="input-group code-block">
+                            <div class="code-input">
+                                <span><i class="icon icon-envelope"></i></span>
+                                <input type="text" id="inputCheck" placeholder="请输入动态验证码"
+                                       errormsg="验证码为6位" nullmsg="请填写动态验证码" datatype="N6" name="password">
+                            </div>
+                            <div class="send-btn">
+                                <!--<a href="javascript:void(0);" onclick="sendCode()">发送验证码</a>-->
+                                <a data-role="getVerify">发送验证码</a>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="code-prompt" id="code-prompt">
+                        <i class="icon icon-check-circle"></i>
+                        验证码已发送至您的手机，请查收
+                    </div>
+                    <div class="mask verify-check" id="mask">
+                        <h3>确认发送验证码</h3>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="code-img">
+                                    <img class="img-responsive reloadverify" src="{:U('Ucenter/Member/verify',array('id'=>2))}" alt="点击切换">
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="input-box">
+                                    <i class="icon icon-check"></i>
+                                    <input id="code-input" type="text" placeholder="请输入图形验证码" name="verify">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <!--<button onclick="codeBlock(1)">确定</button>-->
+                                <button data-role="checkVerify">确定</button>
+                            </div>
+                            <div class="col-xs-6">
+                                <!--<button onclick="codeBlock(0)">取消</button>-->
+                                <button data-role="closeVerify">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label for="username" class=".sr-only col-xs-12" style="display: none"></label>
+                        <div class="user-block">
+                            <span><i class="icon icon-user"></i></span>
+                            <input type="text" id="username" class="form_check" check-type="Nickname" check-url="{:U('ucenter/member/checkNickname')}"
+                                   onblur="setNickname(this);" placeholder="请输入昵称"
+                                   datatype="*11" value="" name="nickname">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div id="password_block" class="input-group">
+                            <div class="password-block">
+                                <span><i class="icon icon-lock"></i></span>
+                                <input type="password" id="inputPassword" placeholder="请输入密码" check-length="6,30"
+                                       errormsg="密码为6-20位" nullmsg="请填写密码" datatype="*6-20" name="password">
+
+                                <div><a href="javascript:void(0);"
+                                        onclick="change_show(this)"><i class="icon icon-eye-close"></i></a></div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="btnbox">
+                        <a href="{:addons_url('SyncLogin://Base/unbind')}" class="btn">跳过绑定</a>
+                        <div></div>
+                    <button type="submit" class="btn">同意协议并绑定</button>
+                    </div>
+                    <div class="user-protocol">
+                        <div>阅读并同意<a>《***用户协议》</a></div>
+                    </div>
+                </form>
+                <php>}</php>
+                <php>if($tip == 'exist'){</php>
+                <form style="margin-top: 40px" action="{:addons_url('SyncLogin://Base/existLogin')}" method="post"  >
+                    <div class="form-group">
+                        <label for="inputEmail" class=".sr-only col-xs-12" style="display: none"></label>
+                        <div class="user-block">
+                            <span><i class="icon icon-user"></i></span>
+                            <input type="text" id="inputEmail" placeholder="请输入用户名"
+                                   ajaxurl="/member/checkUserNameUnique.html" errormsg="请填写1-16位用户名"
+                                   nullmsg="请填写用户名"
+                                   datatype="*1-16" value="" name="username">
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword" class=".sr-only col-xs-12" style="display: none"></label>
+                        <div id="password_block" class="input-group">
+                            <div class="password-block">
+                                <span><i class="icon icon-lock" style="font-size: 16px;"></i></span>
+                                <input type="password" id="inputPassword" placeholder="请输入密码"
+                                       errormsg="密码为6-20位" nullmsg="请填写密码" datatype="*6-20" name="password">
+
+                                <div><a href="javascript:void(0);" onclick="change_show(this)"><i class="icon icon-eye-close"></i></a></div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="btn-check-login">
+                        <div class="checkbox lg_lf_fm_checkbox btn-check">
+                            <label>
+                                <input type="checkbox" name="remember" style="cursor:pointer;"> 记住登录
+                            </label>
+                        </div>
+                        <button type="submit" class="btn-login">登 录</button>
+                    </div>
+                    <div class="clearfix"></div>
+                </form>
+                <php>}</php>
+            </div>
+        </div>
+        </div>
+    </div>
+</block>
+
+<block name="script">
+<script>
+    if(MID==0){
+        $(document)
+                .ajaxStart(function () {
+                    $("button:submit").addClass("log-in").attr("disabled", true);
+                })
+                .ajaxStop(function () {
+                    $("button:submit").removeClass("log-in").attr("disabled", false);
+                });
+        $("form").submit(function () {
+            var self = $(this);
+            $.post(self.attr("action"), self.serialize(), success, "json");
+            return false;
+
+            function success(data) {
+                if (data.status) {
+                    toast.success(data.info, L('_KINDLY_REMINDER_'));
+                    setTimeout(function () {
+                        window.location.href = data.url
+                    }, 1000);
+                } else {
+                    toast.error(data.info, L('_KINDLY_REMINDER_'));
+                    //self.find(".Validform_checktip").text(data.info);
+                    //刷新验证码
+                    $(".reloadverify").click();
+                }
+            }
+        });
+
+        function change_show(obj) {
+            if ($(obj).html().trim() == '<i class="icon icon-eye-close"></i>') {
+                $('#inputPassword').attr('type','text');
+                $(obj).html('<i class="icon icon-eye-open"></i>');
+            } else {
+                $('#inputPassword').attr('type','password');
+                $(obj).html('<i class="icon icon-eye-close"></i>');
+            }
+        }
+
+//        function sendCode() {
+//            var $mask = document.getElementById("mask");
+//            $mask.style.display = "block";
+//        }
+//
+//        function codeBlock(state) {
+//            var $mask = document.getElementById("mask");
+//            var $prompt = document.getElementById("code-prompt");
+//            if(state == 1){
+//                $prompt.style.display = "block";
+//            }
+//            $mask.style.display = "none";
+//        }
+
+        function setNickname(obj){
+            var text=$(obj).val().trim();
+            if(text!=null&&text!=''){
+                $('#nickname').val(text);
+            }
+        }
+
+        $(function () {
+
+            $(".reloadverify").click(function () {
+                var $this = $(this);
+                var verifyimg = $this.attr("src");
+                $this.attr("src", verifyimg + '&random=' + Math.random());
+            });
+        });
+
+        $(function () {
+            $("[data-role='getVerify']").click(function () {
+                var $this = $(this);
+//                    toast.showLoading();
+                var account = $this.parents('.tab-pane').find('[name="username"]').val();
+//                var type = $this.parents('.tab-pane').find('[name="reg_type"]').val();
+                var type = 'mobile';
+//                    var url = "{:U('ucenter/member/checkAccount')}";
+
+                $.post(U('ucenter/member/checkAccount'),{account:account,type:type},function(res){
+                    ajaxRerurn(res);
+                    if(res.info == '验证成功') {
+                        $('.verify-check').show();
+                        $('[data-role="closeVerify"]').click(function() {
+                            $('.verify-check').hide();
+                            return false;
+                        })
+                    }
+                },'json')
+            });
+
+            $('[data-role="checkVerify"]').click(function(event) {
+                var $this = $(this);
+//                    toast.showLoading();
+                var account = $this.parents('.tab-pane').find('[name="username"]').val();
+//                var type = $this.parents('.tab-pane').find('[name="reg_type"]').val();
+                var type = 'mobile';
+                var verify = $this.parents('.tab-pane').find('[name="verify"]').val();
+
+                $.post("{:U('ucenter/verify/sendVerify')}", {account: account, type: type, action: 'member',verify:verify,type_other:1}, function (res) {
+                    if (res.status) {
+                        $('.verify-check').hide();
+                        DecTime.obj = $this;
+                        DecTime.time = "{: modC('SMS_RESEND','60','USERCONFIG')}";
+                        $this.attr('disabled',true);
+                        DecTime.dec_time();
+
+                        toast.success(res.info);
+                    }
+                    else {
+                        toast.error(res.info);
+                    }
+                    toast.hideLoading();
+                });
+                event.preventDefault();
+            });
+
+            $('#reg_nav li a').click(function(){
+                $('.tab-pane').find('input').attr('disabled',true);
+                $('.tab-pane').eq($("#reg_nav li a").index(this)).find('input').attr('disabled',false);
+            })
+            $("[type='submit']").click(function () {
+                $(this).parents('form').submit();
+            })
+
+            $('[href="#{$type}_reg"]').click()
+
+
+        })
+
+        var DecTime = {
+            obj:0,
+            time:0,
+            dec_time : function(){
+                if(this.time > 0){
+                    this.obj.text(this.time--+'S')
+                    setTimeout("DecTime.dec_time()",1000)
+                }else{
+                    this.obj.text("{:L('_EMAIL_VERIFY_')}")
+                    this.obj.attr('disabled',false)
+                }
+
+            }
+        }
+
+    }
+</script>
+    <link href="__ROOT__/Application/Core/Static/css/form_check.css" rel="stylesheet" type="text/css">
+    <script src='__ROOT__/Application/Core/Static/js/form_check.js'></script>
+    <script>
+        // 验证密码长度
+        $(function(){
+            $('#inputPassword').after('<div class=" show_info" ></div>');
+            $('#inputPassword').blur(function(){
+
+                var obj =$('#inputPassword');
+                var str =  obj.val().replace(/\s+/g, "");
+                var html = '';
+                if (str.length == 0) {
+                    html = '<div class="send red"><div class="arrow"></div>不能为空</div>';
+                } else {
+                    if (typeof (obj.attr('check-length')) != 'undefined') {
+                        var strs = new Array(); //定义一数组
+                        strs = obj.attr('check-length').split(","); //字符分割
+                        if (strs[1]) {
+                            if (strs[1] < str.length || str.length < strs[0]) {
+                                html = '<div class="send red"><div class="arrow"></div>长度不符合要求</div>';
+                            }
+                        }
+                        else {
+                            if (strs[0] < str.length) {
+                                html = '<div class="send red"><div class="arrow"></div>长度不符合要求</div>';
+                            }
+                        }
+                    }
+                    obj.parent().find('.show_info').html(html);
+                }
+            })
+        })
+    </script>
+</block>
+
+
+
+
+
+
+
+
+
+

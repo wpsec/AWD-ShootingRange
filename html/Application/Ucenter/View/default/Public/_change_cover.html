@@ -1,0 +1,108 @@
+<block name="style">
+    <link href="__PUBLIC__/css/huploadify.css" rel="stylesheet" type="text/css"/>
+</block>
+<style>
+    .modal-dialog{
+        width: 400px;;
+    }
+    .uploadify{
+        float: left;
+    }
+    .uploadcover{
+        line-height: 21px!important;
+    }
+</style>
+<div class="clearfix">
+    <div class="col-xs-12">
+
+        <input type="hidden" name="user_cover" id="user_cover" value="{$user_info['cover_id']}"/>
+        <div style="color: #999;">
+            {:L('_PIC_SUGGEST_')}
+        </div>
+        <div class="upload-background-box" style="margin-top: 10px;width: 300px;height: 80px;">
+            <if condition="$my_cover['cover_id']">
+                <div class="upload-pre-item" style="width: 348px;height:70px;"><img class="img-responsive" style="width: 100%;height:100%;" src="{$my_cover.cover_path}"/></div>
+            </if>
+        </div>
+        <div class="clearfix"></div>
+        <div id="upload_picture_background"></div>
+        <if condition="$my_cover['cover_id']">
+            <div class="btn btn-primary pull-right" id="submit_cover" disabled="disabled" style="width: 100px;">{:L('_SAVE_')}</div>
+            <else/>
+            <div class="btn btn-primary pull-right" id="submit_cover" disabled="disabled" style="width: 100px;display: none;">{:L('_SAVE_')}</div>
+        </if>
+
+    </div>
+</div>
+
+<script type="text/javascript" src="__STATIC__/huploadify/jquery.js"></script>
+<script type="text/javascript" src="__STATIC__/huploadify/jquery.Huploadify.js"></script>
+<script>
+    $(function () {
+        var up = $('#upload_picture_background').Huploadify({
+            auto: true,
+            fileTypeExts: '*.jpg; *.png; *.gif;',
+            multi: true,//是否允许选择多个文件
+            method: 'post',//发送请求的方式，get或post
+            formData: {},//发送给服务端的参数，格式：{key1:value1,key2:value2}
+            fileSizeLimit: 2048,//允许上传的文件大小，单位KB
+            fileObjName: 'download',//在后端接受文件的参数名称，如PHP中的$_FILES['file']
+            showUploadedPercent: false,//是否实时显示上传的百分比，如20%
+            showUploadedSize: false,//是否实时显示已上传的文件大小，如1M/2M
+            removeTimeout: 0,//上传完成后进度条的消失时间，单位毫秒
+            buttonText: '上传背景',//上传按钮上的文字
+            uploader: "{:U('Core/File/uploadPicture',array('session_id'=>session_id()))}",
+            onUploadStart: function (file) {
+//                    console.log(file.name + '开始上传');
+            },
+            onInit: function (obj) {
+//                    console.log('初始化');
+//                    console.log(obj);
+            },
+            onUploadComplete: uploadPicturecover,//图片上传完成时的回调
+
+
+            onClearQueue: function (queueItemCount) {
+//                    console.log('有' + queueItemCount + '个文件被删除了');
+            },
+            onDestroy: function () {
+//                    console.log('destroyed!');
+            },
+            onSelect: function (file) {
+//                    console.log(file.name + '加入上传队列');
+            },
+            onQueueComplete: function (queueData) {
+//                    console.log('队列中的文件全部上传完成', queueData);
+            }
+        });
+    });
+    function uploadPicturecover(file, data) {
+        var data = $.parseJSON(data);
+        var src = '';
+        if (data.status) {
+            $("#user_cover").val(data.id);
+            src = data.url || data.path
+            $('.upload-background-box').html(
+                    '<div class="upload-pre-item" style="width: 348px;height:70px;"><img class="img-responsive" style="width: 100%;height:100%;" src="' + src + '"/></div>'
+            );
+            $('#submit_cover').attr('disabled',false);
+            $('#submit_cover').show();
+        } else {
+            $('#submit_cover').hide();
+            toast.error("{:L('_SUCCESS_COVER_SELECT_')}{:L('_PERIOD_')}", "{:L('_TIP_GENTLE_')}");
+        }
+    }
+    $('#submit_cover').click(function () {
+        var cover_id = $('#user_cover').val();
+        $.post(U('Ucenter/Public/changeCover'), {cover_id: cover_id}, function (msg) {
+            if (msg.status == 1) {
+                $('.uc_top_img_bg').attr('src', msg.path_1140);
+                $('.uc_top_img_bg_weibo').attr('src', msg.path_273);
+                $('.close').click();
+                toast.success("{:L('_SUCCESS_COVER_CHANGE_')}{:L('_EXCLAMATION_')}");
+            } else {
+                handleAjax(msg)
+            }
+        });
+    });
+</script>

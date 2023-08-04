@@ -1,0 +1,1 @@
+<?php exit();?>a:8:{s:2:"id";s:2:"85";s:5:"title";s:12:"过渡动画";s:6:"status";s:1:"1";s:5:"taxis";s:3:"150";s:4:"note";s:36:"仅用于自定义动画过渡效果";s:6:"layout";s:18:"hits,dateline,sort";s:5:"mtype";s:1:"1";s:3:"tbl";s:4:"list";}

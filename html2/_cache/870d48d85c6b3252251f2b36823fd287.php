@@ -1,0 +1,1 @@
+<?php exit();?>a:8:{s:2:"id";s:2:"21";s:5:"title";s:12:"图片轮播";s:6:"status";s:1:"1";s:5:"taxis";s:2:"20";s:4:"note";s:45:"适用于图片播放器，图片友情链接";s:6:"layout";s:30:"sort,pic,picmobile,link,target";s:5:"mtype";s:1:"0";s:3:"tbl";s:4:"list";}

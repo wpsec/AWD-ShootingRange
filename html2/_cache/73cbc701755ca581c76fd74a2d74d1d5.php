@@ -1,0 +1,1 @@
+<?php exit();?>a:9:{s:2:"id";s:1:"1";s:5:"title";s:12:"默认风格";s:6:"author";s:9:"phpok.com";s:6:"folder";s:3:"www";s:12:"refresh_auto";s:1:"1";s:7:"refresh";s:1:"0";s:3:"ext";s:4:"html";s:13:"folder_change";s:13:"css,images,js";s:9:"phpfolder";s:6:"phpinc";}
